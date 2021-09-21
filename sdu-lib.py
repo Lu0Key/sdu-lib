@@ -78,24 +78,24 @@ def book(id,send_cookies):
     # print(id,send_cookies,request_data)
     return resp
 
-def auto_check(url,send_cookies):
-    base_headers = {
-        "Origin":"http://seat.lib.sdu.edu.cn",
-        "Host":"seat.lib.sdu.edu.cn",
-        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0"
-    }
-    url = "http://seat.lib.sdu.edu.cn/cas/index.php?callback=http://seat.lib.sdu.edu.cn/web/seat3?area="+area+"&segment="+segment+"&day="+day+"&startTime=08:00&endTime=22:30"
-    send_cookies["uservisit"] = "1"
-    resp = requests.get(url=url,headers=headers,cookies=send_cookies)
-    print("\nsend_cookies",send_cookies)
-    print("==============================")
-    for cookie in resp.cookies:
-        send_cookies[cookie.name]=cookie.value
-    send_cookies["redirect_url"] = "/user/index/book"
-    # send_cookies.pop("uservisit")
-    # print("new send_cookies",send_cookies)
-    # print("status_code",resp.status_code)
-    return send_cookies
+# def auto_check(url,send_cookies):
+#     base_headers = {
+#         "Origin":"http://seat.lib.sdu.edu.cn",
+#         "Host":"seat.lib.sdu.edu.cn",
+#         "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0"
+#     }
+#     url = "http://seat.lib.sdu.edu.cn/cas/index.php?callback=http://seat.lib.sdu.edu.cn/web/seat3?area="+area+"&segment="+segment+"&day="+day+"&startTime=08:00&endTime=22:30"
+#     send_cookies["uservisit"] = "1"
+#     resp = requests.get(url=url,headers=headers,cookies=send_cookies)
+#     print("\nsend_cookies",send_cookies)
+#     print("==============================")
+#     for cookie in resp.cookies:
+#         send_cookies[cookie.name]=cookie.value
+#     send_cookies["redirect_url"] = "/user/index/book"
+#     # send_cookies.pop("uservisit")
+#     # print("new send_cookies",send_cookies)
+#     # print("status_code",resp.status_code)
+#     return send_cookies
 
 
 # 登录
