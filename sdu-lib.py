@@ -103,7 +103,7 @@ headers = {
     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0"
 }
 
-url = "http://pass.sdu.edu.cn/cas/login?service=http%3A%2F%2Fseat.lib.sdu.edu.cn%2Fcas%2Findex.php%3Fcallback%3Dhttp%3A%2F%2Fseat.lib.sdu.edu.cn%2Fweb%2Fseat3%3Farea%3D10%26segment%3D2601158%26day%3D"+day+"%26startTime%3D08%3A00%26endTime%3D22%3A30"
+url = "https://pass.sdu.edu.cn/cas/login?service=http%3A%2F%2Fseat.lib.sdu.edu.cn%2Fcas%2Findex.php%3Fcallback%3Dhttp%3A%2F%2Fseat.lib.sdu.edu.cn%2Fweb%2Fseat3%3Farea%3D10%26segment%3D2601158%26day%3D"+day+"%26startTime%3D08%3A00%26endTime%3D22%3A30"
 
 resp = requests.get(url,headers=headers)
 cookies = {
@@ -120,21 +120,37 @@ data["_eventId"] = eventId.get("value")
 data["rsa"] = get_rsa()
 
 # 进行第一次跳转
-url = "http://pass.sdu.edu.cn/cas/login?service=http://seat.lib.sdu.edu.cn/cas/index.php?callback=http://seat.lib.sdu.edu.cn/web/seat3?area=10&segment=2601158&day="+day+"&startTime=08:00&endTime=22:30"
-resp = requests.post(url,data=data,headers=headers,cookies=cookies)
-print(resp.cookies)
-# print(resp.status_code)
-list = resp.history
-list.append(resp)
+url = "https://pass.sdu.edu.cn/cas/login?service=http%3A%2F%2Fseat.lib.sdu.edu.cn%2Fcas%2Findex.php%3Fcallback%3Dhttp%3A%2F%2Fseat.lib.sdu.edu.cn%2Fweb%2Fseat3%3Farea%3D10%26segment%3D2601158%26day%3D"+day+"%26startTime%3D08%3A00%26endTime%3D22%3A30"
+resp = requests.post(url,data=data,headers=headers,cookies=cookies,allow_redirects=False)
+print(resp.headers.get("Location"))
+
 cookies = {}
-for item in list:
-    item_cookies = item.cookies
-    for cookie in item_cookies:
-        cookies[cookie.name]=cookie.value
-cookies["redirect_url"]="/web/seat2/area/3"
-# cookies.pop("CASTGC")
-cookies.pop("Language")
-print(cookies)
+for cookie in resp.cookies:
+    cookies[cookie.name]=cookie.value
+    print(cookies)
+
+# 第二次跳转
+url = resp.headers.get("Location")
+resp = requests.get(url,headers=headers,cookies=cookies,allow_redirects=False)
+print(resp.headers.get("Location"))
+for cookie in resp.cookies:
+    cookies[cookie.name]=cookie.value
+    print(cookies)
+
+# 第三次跳转
+url = resp.headers.get("Location")
+resp = requests.get(url,headers=headers,cookies=cookies,allow_redirects=False)
+print(resp.headers.get("Location"))
+for cookie in resp.cookies:
+    cookies[cookie.name]=cookie.value
+    print(cookies)
+
+# 最后一次跳转
+url = resp.headers.get("Location")
+resp = requests.get("http://seat.lib.sdu.edu.cn"+url,headers=headers,cookies=cookies,allow_redirects=False)
+for cookie in resp.cookies:
+    cookies[cookie.name]=cookie.value
+    print(cookies)
 
 # 登录结束
 
