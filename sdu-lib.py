@@ -5,6 +5,7 @@ import json
 import time
 import os
 import datetime
+import urllib.parse
 
 # 10 六层走廊
 # 58 D616室
@@ -25,10 +26,10 @@ with open(basepath+"info.json") as f:
     f.close()
 
 # 等到第二天一开始才抢座位
-while True:
-    time.sleep(10)
-    if time.strftime("%H:%M", time.localtime()) == "00:02":
-        break
+# while True:
+#     time.sleep(10)
+#     if time.strftime("%H:%M", time.localtime()) == "00:02":
+#         break
 
 # 获取第二天
 def getTomorrow(): 
@@ -123,6 +124,9 @@ data["rsa"] = get_rsa()
 url = "https://pass.sdu.edu.cn/cas/login?service=http%3A%2F%2Fseat.lib.sdu.edu.cn%2Fcas%2Findex.php%3Fcallback%3Dhttp%3A%2F%2Fseat.lib.sdu.edu.cn%2Fweb%2Fseat3%3Farea%3D10%26segment%3D2601158%26day%3D"+day+"%26startTime%3D08%3A00%26endTime%3D22%3A30"
 resp = requests.post(url,data=data,headers=headers,cookies=cookies,allow_redirects=False)
 print(resp.headers.get("Location"))
+url = resp.headers.get("Location")
+if url.startswith("/cas/login?service="):
+    url = url.replace("/cas/login?service=","")
 
 cookies = {}
 for cookie in resp.cookies:
@@ -130,7 +134,8 @@ for cookie in resp.cookies:
     print(cookies)
 
 # 第二次跳转
-url = resp.headers.get("Location")
+print(url)
+url = urllib.parse.unquote(url)
 resp = requests.get(url,headers=headers,cookies=cookies,allow_redirects=False)
 print(resp.headers.get("Location"))
 for cookie in resp.cookies:
